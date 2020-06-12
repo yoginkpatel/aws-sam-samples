@@ -1,0 +1,22 @@
+{
+  "name": "hello_world",
+  "version": "1.0.0",
+  "description": "hello world sample for NodeJS",
+  "main": "app.js",
+  "repository": "https://github.com/awslabs/aws-sam-cli/tree/develop/samcli/local/init/templates/cookiecutter-aws-sam-hello-nodejs",
+  "author": "SAM CLI",
+  "license": "MIT",
+  "dependencies": {
+    "node-uuid": "1.4.8",
+    "uuid": "8.1.0"
+  },
+  "scripts": {
+    "test": "mocha tests/unit/",
+    "helloworld": "sam local invoke -e .aws/templates.json --env-vars .env.json HelloWorldFunction --debug --skip-pull-image"
+  },
+  "devDependencies": {
+    "aws-sdk": "2.692.0",
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4"
+  }
+}

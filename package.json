@@ -1,0 +1,13 @@
+{
+  "name": "SAM ",
+  "version": "1.0.0",
+  "description": "hello world sample for NodeJS",
+  "author": "Yogin Patel",
+  "license": "MIT",
+  "scripts": {
+    "hike": "sam build; sam local invoke --docker-network sam-demo -e events/event.json --env-vars .env.json HikeFunction --skip-pull-image",
+    "hike-api": "sam build; sam local start-api  --env-vars .env.json --docker-network sam-demo",
+    "event-generate": "sam local generate-event apigateway aws-proxy | pbcopy ",
+    "deploy": "sam deploy --template-file template.yaml --stack-name yp-hike --s3-bucket cloudformation-yp --capabilities CAPABILITY_IAM --parameter-overrides ParameterKey=EnvType,ParameterValue=DEV ParameterKey=HikeTable,ParameterValue=yp-hikes ParameterKey=HikeBucket,ParameterValue=yp-hikes-bucket"
+  }
+}

@@ -1,0 +1,106 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  hike-app
+
+  Sample SAM Template for hike-app
+  
+Globals:
+  Function:
+    Timeout: 3
+Parameters:
+  EnvType:
+    Description: Environment Type
+    Type: String
+    Default: DEV
+    AllowedValues: [LOCAL, DEV, STAGE, PROD]
+  HikeTable:
+    Description: Hike DynamoDB Table name
+    Type: String
+    Default: ''
+  HikeBucket:
+    Description: Hike S3 Bucket name
+    Type: String
+    Default: ''
+Resources:
+  HikeFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: hike/
+      Handler: app.hikeHandler
+      Runtime: nodejs10.x
+      Environment:
+        Variables:
+          EnvType: !Ref EnvType
+          HikeTable: !Ref HikeTable
+          HikeBucket: !Ref HikeBucket
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 'dynamodb:GetItem'
+                - 'dynamodb:Query'
+                - 'dynamodb:Scan'
+                - 'dynamodb:BatchGetItem'
+                - 'dynamodb:PutItem'
+                - 'dynamodb:BatchWriteItem'
+                - 'dynamodb:UpdateItem'
+                - 'dynamodb:DeleteItem'
+              Resource: !Sub "arn:aws:dynamodb:*:*:table/${HikeTable}"
+                        # 'Fn::Join':
+                        # - ''
+                        # - - 'arn:aws:dynamodb:'
+                        #   - Ref: 'AWS::Region'
+                        #   - ':'
+                        #   - Ref: 'AWS::AccountId'
+                        #   - ':table/inkProductsTable'
+      Events:
+        ListHikes:
+          Type: Api
+          Properties:
+            Path: /hikes
+            Method: GET
+        GetHike:
+          Type: Api
+          Properties:
+            Path: /hikes/{id}
+            Method: GET
+        PostHike:
+          Type: Api
+          Properties:
+            Path: /hikes
+            Method: POST
+        PutHike:
+          Type: Api
+          Properties:
+            Path: /hikes
+            Method: PUT
+        DeleteHike:
+          Type: Api
+          Properties:
+            Path: /hikes/{id}
+            Method: DELETE
+  HikeTable1:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: !Ref HikeTable
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2  
+# Outputs:
+  # HelloWorldApi:
+  #   Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+  #   Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  # HelloWorldFunction:
+  #   Description: "Hello World Lambda Function ARN"
+  #   Value: !GetAtt HelloWorldFunction.Arn
+  # HelloWorldFunctionIamRole:
+  #   Description: "Implicit IAM Role created for Hello World function"
+  #   Value: !GetAtt HelloWorldFunctionRole.Arn
