@@ -5,6 +5,6 @@ metadata:
   annotations:
     github.com/project-slug: yoginkpatel/aws-sam-samples
 spec:
-  type: other
+  type: api
   lifecycle: unknown
   owner: guests
